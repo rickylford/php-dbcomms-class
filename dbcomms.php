@@ -5,7 +5,7 @@ class dbcomms {
 	protected $datab;
 
 	// connect to database
-	public function __construct($user = '', $pass = '', $host = '', $dbname = '', $options = []) {
+	public function __construct($host = '', $dbname = '', $user = '', $pass = '', $options = []) {
 		try {
 			$this->datab = new PDO("mysql:host=".$host."; dbname=".$dbname."; charset=utf8", $user, $pass, $options);
 			$this->datab->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
