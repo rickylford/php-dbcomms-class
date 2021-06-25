@@ -7,23 +7,21 @@ One of the biggest things that might prevent you from using this class is how I 
 
 ````
 users:
-  users_id
-  users_username
-  users_password
+  id
+  username
+  password
 ````
 	
 ...or if I were creating a "News" table:
 
 ````
 news:
-  news_id
-  news_title
-  news_text
-  news_data
-  news_active
+  id
+  title
+  text
+  data
+  active
 ````
-
-I precede all of my table column names with the name of the table itself and an underscore. Therefore, when this class interacts with your database, it is going to use the first argument "table" for all of the functions and inject that into the code directly. You can redo all of that in the class file itself if you would like, however to keep all of my code in order and conflicts low, that is how I do things.
 
 Here's how to use it yourself:
 
