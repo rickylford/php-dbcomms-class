@@ -1,5 +1,4 @@
 <?php
-
 class dbcomms {
 	public $isConnected;
 	protected $datab;
@@ -36,10 +35,10 @@ class dbcomms {
 
 		if((is_array($where) && is_array($params) && is_array($operators)) && ((count($where) === count($params)) && (count($where) === count($operators)))) {
 			try {
-				$tmpQuery = "SELECT * FROM ".$table." WHERE ";
+				$tmpQuery = "SELECT * FROM `".$table."` WHERE ";
 
 				for($i = 0; $i < count($where); $i++) {
-					$tmpQuery .= $table."_".$where[$i].$operators[$i].":".$table."_".$where[$i];
+					$tmpQuery .= "`".$where[$i]."`".$operators[$i].":".$where[$i];
 
 					if(($i + 1) < count($where)) {
 						$tmpQuery .= " && ";
@@ -47,7 +46,7 @@ class dbcomms {
 
 					$tmpQuery .= " LIMIT 1";
 
-					$paramArray[":".$table."_".$where[$i]] = $params[$i];
+					$paramArray[":".$where[$i]] = $params[$i];
 
 					$stmt = $this->datab->prepare($tmpQuery);
 					$stmt->execute($paramArray);
@@ -71,19 +70,19 @@ class dbcomms {
 
 		if((is_array($where) && is_array($params) && is_array($operators)) && (count($where) === count($params)) && (count($where) === count($operators))) {
 			try {
-				$tmpQuery = "SELECT * FROM ".$table." WHERE ";
+				$tmpQuery = "SELECT * FROM `".$table."` WHERE ";
 
 				for($i = 0; $i < count($where); $i++) {
-					$tmpQuery .= $table."_".$where[$i].$operators[$i].":".$table."_".$where[$i];
+					$tmpQuery .= "`".$where[$i]."`".$operators[$i].":".$where[$i];
 
 					if(($i + 1) < count($where)) {
 						$tmpQuery .= " && ";
 					}
 
-					$paramArray[":".$table."_".$where[$i]] = $params[$i];
+					$paramArray[":".$where[$i]] = $params[$i];
 				}
 
-				$tmpQuery .= " ORDER BY ".$table."_".$orderBy." ".$ascOrDesc;
+				$tmpQuery .= " ORDER BY `".$orderBy."` ".$ascOrDesc;
 
 				$stmt = $this->datab->prepare($tmpQuery);
 				$stmt->execute($paramArray);
@@ -109,18 +108,18 @@ class dbcomms {
 		if((is_array($columns) && is_array($params)) && (count($columns) === count($params))) {
 			try {
 				for($i = 0; $i < count($columns); $i++) {
-					$query .= $table."_".$columns[$i];
+					$query .= "`".$columns[$i]."`";
 					if(($i + 1) < count($columns)) $query .= ",";
 
-					$values .= ":".$table."_".$columns[$i];
+					$values .= ":".$columns[$i];
 					if(($i + 1) < count($columns)) $values .= ",";
 
-					$paramArray[":".$table."_".$columns[$i]] = $params[$i];
+					$paramArray[":".$columns[$i]] = $params[$i];
 				}
 
 				$this->datab->beginTransaction();
 
-				$stmt = $this->datab->prepare("INSERT INTO ".$table." (".$query.") VALUES(".$values.")");
+				$stmt = $this->datab->prepare("INSERT INTO `".$table."` (".$query.") VALUES(".$values.")");
 				$stmt->execute($paramArray);
 
 				$this->datab->commit();
@@ -141,7 +140,7 @@ class dbcomms {
 
 		if((is_array($where) && is_array($operators) && is_array($params)) && (count($where) === count($operators) && count($where) === count($params))) {
 			try {
-				$query = "UPDATE ".$table." SET ".$table."_".$row."=\"".$value."\" ";
+				$query = "UPDATE `".$table."` SET `".$row."`=\"".$value."\" ";
 
 				$query .= " WHERE ";
 
@@ -149,9 +148,9 @@ class dbcomms {
 					return 0;
 				} else {
 					for($i = 0; $i < count($where); $i++) {
-						$query .= $table."_".$where[$i].$operators[$i].":".$table."_".$where[$i];
+						$query .= "`".$where[$i]."`".$operators[$i].":".$where[$i];
 						if(($i + 1) < count($where)) $query .= " && ";
-						$paramArray[":".$table."_".$where[$i]] = $params[$i];
+						$paramArray[":".$where[$i]] = $params[$i];
 					}
 				}
 
@@ -175,16 +174,16 @@ class dbcomms {
 
 		if((is_array($where) && is_array($operators) && is_array($params)) && (count($where) === count($operators) && count($where) === count($params))) {
 			try {
-				$query = "DELETE FROM ".$table." WHERE ";
+				$query = "DELETE FROM `".$table."` WHERE ";
 
 				for($i = 0; $i < count($where); $i++) {
-					$query .= $table."_".$where[$i].$operators[$i].":".$table."_".$where[$i];
+					$query .= "`".$where[$i]."`".$operators[$i].":".$where[$i];
 
 					if(($i + 1) < count($where)) {
 						$query .= " && ";
 					}
 
-					$paramArray[":".$table."_".$where[$i]] = $params[$i];
+					$paramArray[":".$where[$i]] = $params[$i];
 				}
 
 				$stmt = $this->datab->prepare($query);
@@ -198,7 +197,7 @@ class dbcomms {
 	}
 
 	// count the number of rows
-	public function countRows($table, $column, $where, $operators, $params) {
+	public function countRows($table, $where, $operators, $params) {
 		$where = explode(",", $where);
 		$operators = explode(",", $operators);
 		$params = explode(",", $params);
@@ -206,12 +205,12 @@ class dbcomms {
 
 		if((is_array($where) && is_array($operators) && is_array($params)) && (count($where) === count($operators) && count($where) === count($params))) {
 			try {
-				$query = "SELECT ".$table."_".$column." FROM ".$table." WHERE ";
+				$query = "SELECT COUNT(*) FROM ".$table." WHERE ";
 
 				for($i = 0; $i < count($where); $i++) {
-					$query .= $table."_".$where[$i].$operators[$i].":".$table."_".$where[$i];
+					$query .= "`".$where[$i]."`".$operators[$i].":".$where[$i];
 					if(($i + 1) < count($where)) $query .= " && ";
-					$paramArray[":".$table."_".$where[$i]] = $params[$i];
+					$paramArray[":".$where[$i]] = $params[$i];
 				}
 
 				$stmt = $this->datab->prepare($query);
@@ -224,3 +223,4 @@ class dbcomms {
 		}
 	}
 }
+?>
